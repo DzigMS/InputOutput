@@ -1,6 +1,7 @@
 package ua.dp.dzms.filemanager;
 
 import java.io.File;
+import java.io.FileFilter;
 
 public class FileManager {
 //    private static File file;
@@ -42,13 +43,16 @@ public class FileManager {
 
     private static int countDirs(File file){
         int count = 0;
-        File[] subdirectories = file.listFiles();
+        File[] subdirectories = file.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.isDirectory();
+            }
+        });
         if (subdirectories != null) {
             for (File subFile : subdirectories) {
-                if (subFile.isDirectory()) {
                     count++;
                     count += countDirs(new File(subFile.getPath()));
-                }
             }
         }
         return count;
