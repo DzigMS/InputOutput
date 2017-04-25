@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileFilter;
 
 public class FileManager {
-//    private static File file;
 
     public static int calculateFiles(String path) {
         File file = new File(path);
@@ -32,7 +31,7 @@ public class FileManager {
         if (subdirectories != null) {
             for (File subFile : subdirectories) {
                 if (subFile.isDirectory()) {
-                    count += countFiles(new File(subFile.getPath()));
+                    count += countFiles(subFile);
                 } else {
                     count++;
                 }
@@ -52,7 +51,7 @@ public class FileManager {
         if (subdirectories != null) {
             for (File subFile : subdirectories) {
                     count++;
-                    count += countDirs(new File(subFile.getPath()));
+                    count += countDirs(subFile);
             }
         }
         return count;

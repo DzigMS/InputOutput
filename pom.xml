@@ -34,6 +34,13 @@
         <version>4.12</version>
     </dependency>
 
+    <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-api-mockito</artifactId>
+        <version>1.6.6</version>
+    </dependency>
+
+
 </dependencies>
 
 
