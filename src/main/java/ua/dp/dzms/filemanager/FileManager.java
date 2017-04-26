@@ -20,7 +20,7 @@ public class FileManager {
     private static void validate(File file) {
         if (!file.exists()) {
             throw new RuntimeException("Directory not found");
-        }else if (file.isFile()){
+        }else if (!file.isDirectory()){
             throw new RuntimeException("File is not a directory");
         }
     }
@@ -44,13 +44,13 @@ public class FileManager {
         int count = 0;
         File[] subdirectories = file.listFiles(new FileFilter() {
             @Override
-            public boolean accept(File pathname) {
-                return pathname.isDirectory();
+            public boolean accept(File fileFilter) {
+                return fileFilter.isDirectory();
             }
         });
         if (subdirectories != null) {
+            count = subdirectories.length;
             for (File subFile : subdirectories) {
-                    count++;
                     count += countDirs(subFile);
             }
         }
