@@ -1,26 +1,27 @@
 package ua.dp.dzms.filemanager;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.File;
+import java.io.FileFilter;
 
-import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
 
+
+@RunWith(PowerMockRunner.class)
 @PrepareForTest(FileManager.class)
 public class FileManagerTest {
 
     @Before
     public void before() throws Exception {
-    }
-
-    @Test
-    public void calculateFilesTest() throws Exception {
-
         File mockParentDir = mock(File.class);
         when(mockParentDir.exists()).thenReturn(true);
         when(mockParentDir.isDirectory()).thenReturn(true);
@@ -59,24 +60,36 @@ public class FileManagerTest {
         File[] listFileDir3 = {mockFile4};
 
         when(mockParentDir.listFiles()).thenReturn(listFileParentDir);
+        when(mockParentDir.listFiles((FileFilter) Matchers.any())).thenReturn(listFileParentDir);
         when(mockDir1.listFiles()).thenReturn(listFileDir1);
+        when(mockDir1.listFiles((FileFilter) Matchers.any())).thenReturn(listFileDir1);
         when(mockDir3.listFiles()).thenReturn(listFileDir3);
+        when(mockDir3.listFiles((FileFilter) Matchers.any())).thenReturn(listFileDir3);
 
-        PowerMockito.whenNew(File.class).withParameterTypes(String.class).withArguments(Matchers.anyString()).thenReturn(mockParentDir);
-//        PowerMockito.whenNew(File.class).withParameterTypes(String.class).withArguments("Dir1").thenReturn(mockDir1);
-//        PowerMockito.whenNew(File.class).withParameterTypes(String.class).withArguments("Dir2").thenReturn(mockDir2);
-//        PowerMockito.whenNew(File.class).withParameterTypes(String.class).withArguments("Dir3").thenReturn(mockDir3);
+        PowerMockito.whenNew(File.class).withParameterTypes(String.class).withArguments("Test").thenReturn(mockParentDir);
+        PowerMockito.whenNew(File.class).withParameterTypes(String.class).withArguments("Dir1").thenReturn(mockDir1);
+        PowerMockito.whenNew(File.class).withParameterTypes(String.class).withArguments("Dir2").thenReturn(mockDir2);
+        PowerMockito.whenNew(File.class).withParameterTypes(String.class).withArguments("Dir3").thenReturn(mockDir3);
 
-        PowerMockito.mockStatic(FileManager.class);
-        PowerMockito.verifyStatic();
+        PowerMockito.whenNew(File.class).withParameterTypes(String.class).withArguments("File1").thenReturn(mockFile1);
+    }
 
-        FileManager.calculateFiles("Test");
+    @Test
+    public void calculateFilesTest() throws Exception {
+        Assert.assertEquals(4, FileManager.calculateFiles("Test"));
+        Assert.assertEquals(2, FileManager.calculateFiles("Dir1"));
+        Assert.assertEquals(0, FileManager.calculateFiles("Dir2"));
+        Assert.assertEquals(1, FileManager.calculateFiles("Dir3"));
+    }
 
+    @Test(expected = RuntimeException.class)
+    public void calculateFilesTestException() throws Exception {
+        FileManager.calculateFiles("File1");
     }
 
     @org.junit.Test
     public void calculateDirsTest() throws Exception {
-
+        Assert.assertEquals(3, FileManager.calculateDirs("Test"));
     }
 
 }
