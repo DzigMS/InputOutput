@@ -22,7 +22,7 @@ public class FileManager {
     public static boolean copy(String from, String to) {
         File fileFrom = new File(from);
         File fileTo = new File(to);
-        if (fileFrom.exists() || fileTo.exists() || fileTo.isDirectory()) {
+        if (fileFrom.exists() && fileTo.exists() && fileTo.isDirectory()) {
             try {
                 Files.copy(fileFrom.toPath(), fileTo.toPath());
                 return true;
@@ -35,7 +35,7 @@ public class FileManager {
     public static boolean move(String from, String to) {
         File fileFrom = new File(from);
         File fileTo = new File(to);
-        if (fileFrom.exists() || fileTo.exists() || fileTo.isDirectory()) {
+        if (fileFrom.exists() && fileTo.exists() && fileTo.isDirectory()) {
             try {
                 Files.move(fileFrom.toPath(), fileTo.toPath());
                 return true;
