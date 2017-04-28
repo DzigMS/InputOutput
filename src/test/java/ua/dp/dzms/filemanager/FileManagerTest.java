@@ -60,11 +60,11 @@ public class FileManagerTest {
         File[] listFileDir3 = {mockFile4};
 
         when(mockParentDir.listFiles()).thenReturn(listFileParentDir);
-        when(mockParentDir.listFiles((FileFilter) Matchers.any())).thenReturn(listFileParentDir);
+        when(mockParentDir.listFiles((FileFilter) Matchers.any())).thenReturn(new File[]{mockDir1, mockDir2});
         when(mockDir1.listFiles()).thenReturn(listFileDir1);
-        when(mockDir1.listFiles((FileFilter) Matchers.any())).thenReturn(listFileDir1);
+        when(mockDir1.listFiles((FileFilter) Matchers.any())).thenReturn(new File[]{mockDir3});
         when(mockDir3.listFiles()).thenReturn(listFileDir3);
-        when(mockDir3.listFiles((FileFilter) Matchers.any())).thenReturn(listFileDir3);
+        when(mockDir3.listFiles((FileFilter) Matchers.any())).thenReturn(new File[]{});
 
         PowerMockito.whenNew(File.class).withParameterTypes(String.class).withArguments("Test").thenReturn(mockParentDir);
         PowerMockito.whenNew(File.class).withParameterTypes(String.class).withArguments("Dir1").thenReturn(mockDir1);
@@ -90,6 +90,13 @@ public class FileManagerTest {
     @org.junit.Test
     public void calculateDirsTest() throws Exception {
         Assert.assertEquals(3, FileManager.calculateDirs("Test"));
+        Assert.assertEquals(1, FileManager.calculateDirs("Dir1"));
+        Assert.assertEquals(0, FileManager.calculateDirs("Dir2"));
+        Assert.assertEquals(0, FileManager.calculateDirs("Dir3"));
     }
 
+    @Test(expected = RuntimeException.class)
+    public void calculateDirsTestException() throws Exception {
+        FileManager.calculateDirs("File1");
+    }
 }
