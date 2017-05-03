@@ -1,6 +1,7 @@
-package ua.dp.dzms.messagestore.service;
+package ua.dp.dzms.messagestore.service.impl;
 
 import ua.dp.dzms.messagestore.entity.Message;
+import ua.dp.dzms.messagestore.service.MessageStore;
 
 import java.util.Collection;
 import java.util.List;
