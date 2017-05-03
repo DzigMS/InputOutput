@@ -9,11 +9,12 @@ import ua.dp.dzms.messagestore.service.MessageStoreTest;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+import static org.junit.Assert.*;
 
-public class SerializationMessageStoreTest extends MessageStoreTest{
+public class CustomMessageStoreTest extends MessageStoreTest{
 
     @Override
     public void init() {
-        messageStore = new SerializationMessageStore();
+        messageStore = new CustomMessageStore();
     }
 }
