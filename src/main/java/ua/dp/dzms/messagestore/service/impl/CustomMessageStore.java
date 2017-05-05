@@ -3,6 +3,7 @@ package ua.dp.dzms.messagestore.service.impl;
 import ua.dp.dzms.messagestore.entity.Message;
 import ua.dp.dzms.messagestore.service.MessageStore;
 
+import javax.activation.FileDataSource;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -11,6 +12,12 @@ import java.util.Collection;
 import java.util.List;
 
 public class CustomMessageStore implements MessageStore {
+    private FileDataSource fileDataSource;
+
+    public CustomMessageStore(FileDataSource fileDataSource) {
+        this.fileDataSource = fileDataSource;
+    }
+
     @Override
     public void persist(Message message) {
         persist(Arrays.asList(new Message[]{message}));
@@ -18,7 +25,9 @@ public class CustomMessageStore implements MessageStore {
 
     @Override
     public void persist(Collection<Message> list) {
-        try (FileOutputStream fileOutputStream = new FileOutputStream(new File("src/main/resources/CustomHistory"), true);) {
+        try (
+                FileOutputStream fileOutputStream = new FileOutputStream(fileDataSource.getFile(), true)
+        ) {
             DataOutputStream dataOutputStream = null;
             for (Message message : list) {
                 dataOutputStream = new DataOutputStream(fileOutputStream);
@@ -40,7 +49,8 @@ public class CustomMessageStore implements MessageStore {
     public List<Message> read() {
         List<Message> messageList = new ArrayList<>();
         try (
-                FileInputStream fileInputStream = new FileInputStream(new File("src/main/resources/CustomHistory"));
+                FileInputStream fileInputStream = (FileInputStream) fileDataSource.getInputStream();
+
         ) {
             DataInputStream dataInputStream = null;
             Message message;

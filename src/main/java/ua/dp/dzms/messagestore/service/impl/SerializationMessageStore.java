@@ -3,16 +3,24 @@ package ua.dp.dzms.messagestore.service.impl;
 import ua.dp.dzms.messagestore.entity.Message;
 import ua.dp.dzms.messagestore.service.MessageStore;
 
+import javax.activation.FileDataSource;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class SerializationMessageStore implements MessageStore {
+    private FileDataSource fileDataSource;
+
+    public SerializationMessageStore(FileDataSource fileDataSource) {
+        this.fileDataSource = fileDataSource;
+    }
+
     @Override
     public void persist(Message message) {
-        try (FileOutputStream fileOutputStream = new FileOutputStream(new File("src/main/resources/History"), true);
-             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
+        try (
+                FileOutputStream fileOutputStream = new FileOutputStream(fileDataSource.getFile(), true);
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
             objectOutputStream.writeObject(message);
             objectOutputStream.flush();
         } catch (IOException e) {
@@ -22,7 +30,9 @@ public class SerializationMessageStore implements MessageStore {
 
     @Override
     public void persist(Collection<Message> list) {
-        try (FileOutputStream fileOutputStream = new FileOutputStream(new File("src/main/resources/History"), true);) {
+        try (
+                FileOutputStream fileOutputStream = new FileOutputStream(fileDataSource.getFile(), true);
+        ) {
             ObjectOutputStream objectOutputStream = null;
             for (Message message : list) {
                 objectOutputStream = new ObjectOutputStream(fileOutputStream);
@@ -41,7 +51,7 @@ public class SerializationMessageStore implements MessageStore {
     public List<Message> read() {
         List<Message> messageList = new ArrayList<>();
         try (
-                FileInputStream fileInputStream = new FileInputStream(new File("src/main/resources/History"));
+                FileInputStream fileInputStream = (FileInputStream) fileDataSource.getInputStream();
         ) {
             ObjectInputStream objectInputStream = null;
             Message message;

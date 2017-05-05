@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface MessageStore {
     void persist(Message message);
+
     void persist(Collection<Message> list);
+
     List<Message> read();
 }

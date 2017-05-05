@@ -3,7 +3,7 @@ package ua.dp.dzms.messagestore.entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Message implements Serializable{
+public class Message implements Serializable {
     private int id;
     private LocalDate date;
     private String content;

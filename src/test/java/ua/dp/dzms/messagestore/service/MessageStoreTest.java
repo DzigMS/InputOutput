@@ -4,20 +4,19 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import ua.dp.dzms.messagestore.entity.Message;
-import ua.dp.dzms.messagestore.service.impl.CustomMessageStore;
-import ua.dp.dzms.messagestore.service.impl.SerializationMessageStore;
 
+import javax.activation.FileDataSource;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
-
 public abstract class MessageStoreTest {
     public MessageStore messageStore;
+    public FileDataSource fileDataSource = new FileDataSource("src/main/resources/History");
+
 
     @Before
-    public void before(){
-        init();
+    public void before() {
+        getMessageStore();
     }
 
     @Test
@@ -51,7 +50,8 @@ public abstract class MessageStoreTest {
             Assert.assertEquals(i, ((Message) messages.get(i)).getId());
             Assert.assertEquals(LocalDate.of(2017, 5, 3), ((Message) messages.get(i)).getDate());
         }
+        fileDataSource.getFile().delete();
     }
 
-    public abstract void init();
+    public abstract void getMessageStore();
 }
