@@ -30,4 +30,13 @@ public class LogToken {
     public String getMessage() {
         return message;
     }
+
+    @Override
+    public String toString() {
+        return "LogToken{" +
+                "localDateTime=" + localDateTime +
+                ", method=" + method +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }

@@ -20,7 +20,7 @@ public abstract class MessageStoreTest {
     }
 
     @Test
-    public void persistTest() throws Exception {
+    public void persistTest(){
         for (int i = 0; i < 5; i++) {
             Message message = new Message();
             message.setId(i);
@@ -31,7 +31,7 @@ public abstract class MessageStoreTest {
     }
 
     @Test
-    public void persistCollectionTest() throws Exception {
+    public void persistCollectionTest(){
         ArrayList<Message> messages = new ArrayList<>();
         for (int i = 5; i < 9; i++) {
             Message message = new Message();
@@ -44,7 +44,7 @@ public abstract class MessageStoreTest {
     }
 
     @Test
-    public void readTest() throws Exception {
+    public void readTest(){
         ArrayList messages = (ArrayList) messageStore.read();
         for (int i = 0; i < messages.size(); i++) {
             Assert.assertEquals(i, ((Message) messages.get(i)).getId());
