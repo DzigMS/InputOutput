@@ -3,7 +3,9 @@ package ua.dp.dzms.loganalyzer;
 import ua.dp.dzms.loganalyzer.entity.HttpMethod;
 import ua.dp.dzms.loganalyzer.entity.LogToken;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -20,21 +22,18 @@ public class LogAnalyzer {
 
     public Collection<LogToken> parseFile(String path, LocalDateTime timeFrom, LocalDateTime timeTo) {
         String readLine;
-        LogToken logToken;
         List<LogToken> logTokenList = new ArrayList<>();
         Pattern pattern = Pattern.compile(PatternDate + PatternHttpMethod + PatternMessage);
 
-        try (
-                FileReader fileReader = new FileReader(path);
-                BufferedReader bufferedReader = new BufferedReader(fileReader)
-        ) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(path))) {
             while ((readLine = bufferedReader.readLine()) != null) {
                 Matcher matcher = pattern.matcher(readLine);
                 if (matcher.find()) {
-                    LocalDateTime localDateTime = getDateTime(matcher.group(1).replaceAll("/|-|:", " "));
-                    if (localDateTime.isAfter(timeFrom) && localDateTime.isBefore(timeTo)){
+                    LocalDateTime logTokenDateTime = getDateTime(matcher.group(1).replaceAll("/|-|:", " "));
+                    LogToken logToken;
+                    if (logTokenDateTime.isAfter(timeFrom) && logTokenDateTime.isBefore(timeTo)) {
                         logToken = new LogToken();
-                        logToken.setLocalDateTime(localDateTime);
+                        logToken.setLocalDateTime(logTokenDateTime);
                         logToken.setMethod(getMethod(matcher.group(2)));
                         logToken.setMessage(matcher.group(3));
                         logTokenList.add(logToken);
@@ -47,12 +46,12 @@ public class LogAnalyzer {
         return logTokenList;
     }
 
-    private LocalDateTime getDateTime(String dateTime){
+    private LocalDateTime getDateTime(String dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH mm ss", Locale.ENGLISH);
         return LocalDateTime.parse(dateTime, formatter);
     }
 
-    private HttpMethod getMethod(String httpMethod){
-        return httpMethod.equals("GET") ? HttpMethod.GET : HttpMethod.POST;
+    private HttpMethod getMethod(String httpMethod) {
+        return HttpMethod.getHttpMethod(httpMethod);
     }
 }

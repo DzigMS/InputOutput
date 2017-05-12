@@ -7,6 +7,6 @@ public class SerializationMessageStoreTest extends MessageStoreTest {
 
     @Override
     public void getMessageStore() {
-        messageStore = new SerializationMessageStore(fileDataSource);
+        messageStore = new SerializationMessageStore(file);
     }
 }

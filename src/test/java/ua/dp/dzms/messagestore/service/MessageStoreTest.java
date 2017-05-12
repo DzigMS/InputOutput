@@ -5,22 +5,23 @@ import org.junit.Before;
 import org.junit.Test;
 import ua.dp.dzms.messagestore.entity.Message;
 
-import javax.activation.FileDataSource;
+import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 public abstract class MessageStoreTest {
     public MessageStore messageStore;
-    public FileDataSource fileDataSource = new FileDataSource("src/main/resources/History");
+    public File file = new File("src/main/resources/History");
 
 
     @Before
     public void before() {
+        file.delete();
+        file = new File("src/main/resources/History");
         getMessageStore();
     }
 
-    @Test
-    public void persistTest(){
+    public void persist(){
         for (int i = 0; i < 5; i++) {
             Message message = new Message();
             message.setId(i);
@@ -30,8 +31,7 @@ public abstract class MessageStoreTest {
         }
     }
 
-    @Test
-    public void persistCollectionTest(){
+    public void persistCollection(){
         ArrayList<Message> messages = new ArrayList<>();
         for (int i = 5; i < 9; i++) {
             Message message = new Message();
@@ -45,12 +45,13 @@ public abstract class MessageStoreTest {
 
     @Test
     public void readTest(){
+        persist();
+        persistCollection();
         ArrayList messages = (ArrayList) messageStore.read();
         for (int i = 0; i < messages.size(); i++) {
             Assert.assertEquals(i, ((Message) messages.get(i)).getId());
             Assert.assertEquals(LocalDate.of(2017, 5, 3), ((Message) messages.get(i)).getDate());
         }
-        fileDataSource.getFile().delete();
     }
 
     public abstract void getMessageStore();

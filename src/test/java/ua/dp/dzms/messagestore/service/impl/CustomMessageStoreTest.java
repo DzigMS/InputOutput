@@ -6,6 +6,6 @@ public class CustomMessageStoreTest extends MessageStoreTest {
 
     @Override
     public void getMessageStore() {
-        messageStore = new CustomMessageStore(fileDataSource);
+        messageStore = new CustomMessageStore(file);
     }
 }
