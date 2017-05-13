@@ -1,7 +1,5 @@
 package ua.dp.dzms.filemanager;
 
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -11,7 +9,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 
+import static org.junit.Assert.*;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -20,7 +20,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest(FileManager.class)
 public class FileManagerTest {
 
-    @Before
     public void before() throws Exception {
         File mockParentDir = mock(File.class);
         when(mockParentDir.exists()).thenReturn(true);
@@ -76,27 +75,55 @@ public class FileManagerTest {
 
     @Test
     public void calculateFilesTest() throws Exception {
-        Assert.assertEquals(4, FileManager.calculateFiles("Test"));
-        Assert.assertEquals(2, FileManager.calculateFiles("Dir1"));
-        Assert.assertEquals(0, FileManager.calculateFiles("Dir2"));
-        Assert.assertEquals(1, FileManager.calculateFiles("Dir3"));
+        before();
+        assertEquals(4, FileManager.calculateFiles("Test"));
+        assertEquals(2, FileManager.calculateFiles("Dir1"));
+        assertEquals(0, FileManager.calculateFiles("Dir2"));
+        assertEquals(1, FileManager.calculateFiles("Dir3"));
     }
 
     @Test(expected = RuntimeException.class)
     public void calculateFilesTestException() throws Exception {
+        before();
         FileManager.calculateFiles("File1");
     }
 
-    @org.junit.Test
+    @Test
     public void calculateDirsTest() throws Exception {
-        Assert.assertEquals(3, FileManager.calculateDirs("Test"));
-        Assert.assertEquals(1, FileManager.calculateDirs("Dir1"));
-        Assert.assertEquals(0, FileManager.calculateDirs("Dir2"));
-        Assert.assertEquals(0, FileManager.calculateDirs("Dir3"));
+        before();
+        assertEquals(3, FileManager.calculateDirs("Test"));
+        assertEquals(1, FileManager.calculateDirs("Dir1"));
+        assertEquals(0, FileManager.calculateDirs("Dir2"));
+        assertEquals(0, FileManager.calculateDirs("Dir3"));
     }
 
     @Test(expected = RuntimeException.class)
     public void calculateDirsTestException() throws Exception {
+        before();
         FileManager.calculateDirs("File1");
+    }
+
+    @Test
+    public void copyTest() throws IOException {
+        String copyFrom = "src/main/resources/FileManagerTest/Copy/CopyFrom/ParentDir";
+        String copyTo = "src/main/resources/FileManagerTest/Copy/CopyTo/";
+
+        assertTrue(FileManager.copy(copyFrom, copyTo));
+        assertTrue((new File(copyTo + "/ParentDir/File1")).exists());
+        assertFalse(FileManager.copy(copyFrom + "/Dir3", copyTo));
+    }
+
+    @Test
+    public void moveTest() throws IOException {
+        String copyFrom = "src/main/resources/FileManagerTest/Copy/CopyFrom/ParentDir";
+        String copyTo = "src/main/resources/FileManagerTest/Move/From/";
+        String moveFrom = "src/main/resources/FileManagerTest/Move/From/ParentDir";
+        String moveTo = "src/main/resources/FileManagerTest/Move/To";
+//        FileManager.copy(copyFrom, copyTo);
+
+        assertTrue(FileManager.move(moveFrom, moveTo));
+        assertTrue((new File(moveTo + "/ParentDir/File1")).exists());
+        assertFalse(new File(moveFrom).exists());
+        assertFalse(FileManager.copy(moveFrom + "/Dir3", moveTo));
     }
 }

@@ -1,7 +1,7 @@
 package ua.dp.dzms.messagestore.service.impl;
 
 import ua.dp.dzms.messagestore.entity.Message;
-import ua.dp.dzms.messagestore.service.AppendObjectOutputStream;
+import ua.dp.dzms.messagestore.entity.AppendObjectOutputStream;
 import ua.dp.dzms.messagestore.service.MessageStore;
 
 import java.io.*;

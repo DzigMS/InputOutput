@@ -1,9 +1,6 @@
 package ua.dp.dzms.filemanager;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.io.*;
 
 public class FileManager {
 
@@ -23,32 +20,25 @@ public class FileManager {
         File fileFrom = new File(from);
         File fileTo = new File(to);
         if (fileFrom.exists() && fileTo.exists() && fileTo.isDirectory()) {
-            try {
-                Files.copy(fileFrom.toPath(), fileTo.toPath());
-                return true;
-            } catch (IOException e) {
-                throw new RuntimeException("Can't copy");
-            }
+            copyFilesAndDirs(fileFrom, fileTo);
+            return true;
         } else return false;
     }
+
 
     public static boolean move(String from, String to) {
         File fileFrom = new File(from);
         File fileTo = new File(to);
-        if (fileFrom.exists() && fileTo.exists() && fileTo.isDirectory()) {
-            try {
-                Files.move(fileFrom.toPath(), fileTo.toPath());
-                return true;
-            } catch (IOException e) {
-                throw new RuntimeException("Can't move");
-            }
+        if (copy(from, to)) {
+            deleteFile(fileFrom);
+            return true;
         } else return false;
     }
 
     private static void validateDir(File file) {
-        if (!file.exists()){
+        if (!file.exists()) {
             throw new RuntimeException("File not found");
-        }else if (!file.isDirectory()) {
+        } else if (!file.isDirectory()) {
             throw new RuntimeException("File is not a directory");
         }
     }
@@ -85,4 +75,48 @@ public class FileManager {
         return count;
     }
 
+    private static void copyFilesAndDirs(File fileFrom, File fileTo) {
+        if (fileFrom.isDirectory()) {
+            File dirCopy = getCopyFileBy(fileTo.getPath() + "/" + fileFrom.getName());
+            dirCopy.mkdir();
+            File[] files = fileFrom.listFiles();
+            if (files != null) {
+                for (File subFile : files) {
+                    copyFilesAndDirs(subFile, dirCopy);
+                }
+            }
+        } else {
+            writeData(fileFrom, fileTo);
+        }
+    }
+
+    private static void writeData(File fileFrom, File fileTo) {
+        File fileCopy = getCopyFileBy(fileTo.getPath() + "/" + fileFrom.getName());
+        try (BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(fileFrom));
+             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(fileCopy))) {
+            int read;
+            byte[] b = new byte[4096];
+            while ((read = bufferedInputStream.read(b)) > 0) {
+                bufferedOutputStream.write(b, 0, read);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Can't copy");
+        }
+    }
+
+    private static void deleteFile(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            for (File subFile : files) {
+                deleteFile(subFile);
+                subFile.delete();
+            }
+        }
+        file.delete();
+    }
+
+    private static File getCopyFileBy(String path) {
+        File copyFile = new File(path);
+        return (!copyFile.exists()) ? copyFile : (new File(path + "-copy"));
+    }
 }

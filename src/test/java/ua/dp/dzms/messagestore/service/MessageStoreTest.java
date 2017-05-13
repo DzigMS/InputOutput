@@ -11,13 +11,13 @@ import java.util.ArrayList;
 
 public abstract class MessageStoreTest {
     public MessageStore messageStore;
-    public File file = new File("src/main/resources/History");
+    public File file = new File("src/main/resources/MessageStore/History");
 
 
     @Before
     public void before() {
         file.delete();
-        file = new File("src/main/resources/History");
+        file = new File("src/main/resources/MessageStore/History");
         getMessageStore();
     }
 
